@@ -23,3 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 *.tgz
+.env
+
+# Ignore Yarn related files and folders
+.yarn/*
+.yarnrc
+yarn.lock
+yarn-error.log

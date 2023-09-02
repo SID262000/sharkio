@@ -1,74 +1,75 @@
-import { Box, Chip, ListItemButton } from '@mui/material';
-import React, { useContext } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { routes } from '../../constants/routes';
-import { RequestsMetadataContext } from '../../context/requests-context';
-import { InterceptedRequest, SnifferConfig } from '../../types/types';
-import { HttpMethod } from '../http-method/http-method';
-import { ServiceName } from '../service-name/service-name';
-import styles from './request-row.module.scss';
+import { Box, Chip, ListItemButton } from "@mui/material";
+import React, { useContext } from "react";
+import { RequestsMetadataContext } from "../../context/requests-context";
+import { InterceptedRequest, SnifferConfig } from "../../types/types";
+import { HttpMethod } from "../http-method/http-method";
+import { ServiceName } from "../service-name/service-name";
+import styles from "./request-row.module.scss";
 interface IRequestRowProps {
-  request: InterceptedRequest;
-  serviceId: SnifferConfig['id'];
+  serviceId: SnifferConfig["id"];
+  onRequestClicked: (requestId: InterceptedRequest["id"]) => void;
+  id: InterceptedRequest["id"];
+  method: InterceptedRequest["method"];
+  url: InterceptedRequest["url"];
+  timestamp: InterceptedRequest["lastInvocationDate"];
+  hitCount?: InterceptedRequest["hitCount"];
 }
 
 export const RequestRow: React.FC<IRequestRowProps> = ({
-  request,
   serviceId,
+  onRequestClicked,
+  id,
+  method,
+  url,
+  timestamp,
+  hitCount,
 }) => {
-  const navigate = useNavigate();
   const { servicesData } = useContext(RequestsMetadataContext);
-
   const service = servicesData?.find((service) => service.id == serviceId);
 
   return (
     <>
-      <ListItemButton
-        key={request.id}
-        onClick={() => {
-          navigate(generatePath(routes.REQUEST, { id: request.id, serviceId }));
-        }}
-      >
+      <ListItemButton key={id} onClick={() => onRequestClicked(id)}>
         <Box
           sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
           <div className={styles.requestLeftSection}>
             <div className={styles.serviceContainer}>
-              <ServiceName service={service?.name ?? ''} />
+              <ServiceName service={service?.name ?? ""} />
             </div>
             <div className={styles.methodContainer}>
-              <HttpMethod method={request.method} />
+              <HttpMethod method={method} />
             </div>
-            <span className={styles.url}>{request.url}</span>
+            <span className={styles.url}>{url}</span>
           </div>
 
           <div>
             <Box
               sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                columnGap: '15px',
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                columnGap: "15px",
               }}
             >
               <Box
                 sx={{
                   display: {
-                    xs: 'none',
-                    sm: 'none',
-                    md: 'none',
-                    lg: 'block',
-                    xl: 'block',
+                    xs: "none",
+                    sm: "none",
+                    md: "none",
+                    lg: "block",
+                    xl: "block",
                   },
                 }}
               >
-                <div>{request.lastInvocationDate}</div>
+                <div>{timestamp}</div>
               </Box>
-              <Chip label={request.hitCount}></Chip>
+              {hitCount && <Chip label={hitCount}></Chip>}
             </Box>
           </div>
         </Box>
